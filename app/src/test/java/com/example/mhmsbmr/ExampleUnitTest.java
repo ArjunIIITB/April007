@@ -1,5 +1,8 @@
 package com.example.mhmsbmr;
 
+// Working fine do not touch it.
+
+
 import android.view.View;
 import android.widget.Button;
 
@@ -56,6 +59,13 @@ public class ExampleUnitTest {
          //Button button = LoginBmr findViewById()
 
      }
+
+    @Test
+    public void getOrgTest(){
+        LoginBmr loginBmr = new LoginBmr();
+        //loginBmr.getAssociatedOrganisation("dummy");
+    }
+
 
 
 }

@@ -2,6 +2,7 @@ package com.example.mhmsbmr.Login;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.SyncStatusObserver;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
@@ -21,7 +22,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 
+import java.security.KeyFactory;
+import java.security.PublicKey;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.HashMap;
+
+import javax.crypto.Cipher;
 
 import okhttp3.FormBody;
 import okhttp3.MediaType;
@@ -42,6 +48,7 @@ public class LoginBmr extends AppCompatActivity {
     OkHttpClient client = new OkHttpClient();
 
     private final String GlobalVariables = "http://13.126.27.50/MHMS_DEV/user/";
+    private final String GlobalVariablesRest = "http://13.126.27.50/MHMS_DEV/rest/";
     private final String CORS = "http://13.126.27.50";
 
     @Override
@@ -109,12 +116,9 @@ public void newThread(View view) {
         try {
             response = client.newCall(request).execute();
             okhttp3.ResponseBody rb = response.body();
-            //System.out.println(rb.string());
+
             JSONArray arr = new JSONArray(rb.string());
-            //JSONObject obj = (JSONObject) arr.get(0);
-            //System.out.println(obj.get("personIdentifiers"));
-            //JSONObject pi = (JSONObject) obj.get("personIdentifiers");
-            //System.out.println(pi.getString("dateCreated"));
+
 
             HashMap<Integer, String[]> userMap = new HashMap<Integer, String[]>();
             for(int i=0; i<arr.length(); i++){
@@ -186,10 +190,6 @@ public void newThread(View view) {
         }catch (Exception e){
             e.printStackTrace();
         }
-        /*if(true) {
-            System.out.println("This is the json object check whether it is starting with '{' or not ? " + jsonObject.toString());
-            return;
-        }*/
 
         RequestBody formBody = RequestBody.create(JSON, jsonObject.toString());
 
@@ -213,28 +213,6 @@ public void newThread(View view) {
         }catch(Exception e){
             e.printStackTrace();
         }
-
-
-/*        String urlString = GlobalVariables+relativePath; // URL to call
-        String data = jsonObject.toString(); //data to post
-        OutputStream out = null;
-
-        try {
-            URL url = new URL(urlString);
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-            out = new BufferedOutputStream(urlConnection.getOutputStream());
-
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
-            writer.write(data);
-            writer.flush();
-            writer.close();
-            out.close();
-
-            urlConnection.connect();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }*/
-
 
     }// loginTest ends here
 
@@ -278,6 +256,56 @@ public void newThread(View view) {
                     e.printStackTrace();
                 }
     } //getCaptcha ends
+
+
+
+    public void getAssociatedOrganisation(String bearer){
+        bearer = "eyJEZXZlbG9wZWQgQnkiOiJlLUhlYWx0aCBSZXNlYXJjaCBDZW50ZXIsIElJSVQgQmFuZ2Fsb3JlIiwiSG9zdCI6Ikthcm5hdGFrYSBNZW50YWwgSGVhbHRoIE1hbmFnZW1lbnQgU3lzdGVtIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJwcm9mZXNzaW9uIjoiTUhNU1BzeWNob2xvZ2lvaW9pc3RzdGlzaXRhY2NlcHRpbmciLCJzdWIiOiJNSE1TIFNlY3VyaXR5IFRva2VuIiwic2Vzc2lvbkVuZFRpbWUiOjE1ODM4MDY5NTEsImlzcyI6IktNSE1TIiwic2Vzc2lvblN0YXJ0VGltZSI6MTU4Mzc2Mzc1MSwic2Vzc2lvbklkIjoiNjhjMmQ5NDYtODEwZi00MDc5LWFkZjItYzRlYjVhMGQ4ODAyIiwidXNlck5hbWUiOiJwcmFzaGFudCIsIm9yZ1VVSUQiOiJhMjFiODg1ZS0yZjNhLTQ0MjUtOGI1Yi0wZDI3NGI0MmFmMjYiLCJuYmYiOjE1ODM3NjM3NTEsIm9yZ1JvbGUiOiJNSEVBZG1pbiIsInNlc3Npb25Ub2tlbiI6IlNlc3Npb25JZDoxNzIuMzEuNS4xMyNwcmFzaGFudDphMjFiODg1ZS0yZjNhLTQ0MjUtOGI1Yi0wZDI3NGI0MmFmMjY6TUhNUzpNSEVBZG1pbiMxNTgzNzYzNzUxMzE3Iy0xMjI5NDQzNDgjMTkiLCJwZXJzb25JZCI6IjkyNWQ2N2NkLTdkM2MtNDA3OC04OWZiLTY5NjNjNDdiNDk2YSIsInVzZXJVVUlEIjoiNzc1YjhjM2UtNjc0Mi00YjMwLWI0NDMtYzdkNmFhNmVjNGFjIiwiZXhwIjoxNTgzNzk5NzUxLCJpYXQiOjE1ODM3NjM3NTF9.QoTSq5cq_QCIJtCraDdyhnU3ynNQFeUq81cFm4pIjNM";
+        String relativePath = "getAssociatedOrg";
+
+        final MediaType JSON
+                = MediaType.parse("application/json; charset=utf-8");
+
+        JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put("user_token","SessionId:172.31.5.13#prashant:a21b885e-2f3a-4425-8b5b-0d274b42af26:MHMS:MHEAdmin#1583763751317#-122944348#19");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        RequestBody formBody = RequestBody.create(JSON, jsonObject.toString());
+
+
+        Request request = new Request.Builder()
+                .url(GlobalVariablesRest+relativePath)
+                //.url("http://13.126.27.50/MHMS_DEV/rest/getAssociatedOrg")
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Authorization", "Bearer "+bearer)
+                //.addHeader("Access-Control-Allow-Origin", CORS )
+                .post(formBody)
+
+                .build();
+
+
+
+        Response response = null;
+
+        try {
+            response = client.newCall(request).execute();
+            String whatIGot = response.body().string();
+            System.out.println("_______________________________________________________________________________");
+            System.out.println(whatIGot);
+            //JSONObject obj = new JSONObject(whatIGot);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+    public void call(){
+        //LoginBmr.enccriptData("Test@123");
+        System.out.println("hello");
+    }
 
 
 
