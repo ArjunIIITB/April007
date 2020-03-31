@@ -24,7 +24,7 @@ public class MHPFlowTest {
         String userName = "prashant";
         String password = "Test@123";
         LoginBmr lb = new LoginBmr();
-        String salts[] = lb.getSalt(userName);
+        String salts[] = mhp.getSalt(userName);
         String hash = BCrypt.hashpw(password, salts[0]);
         String hash1 = BCrypt.hashpw(hash, salts[1]);
         System.out.println("hash " + hash);
@@ -40,19 +40,10 @@ public class MHPFlowTest {
         //System.out.println(token);
         //System.out.println(result.getString("sessionToken"));
         //System.out.println(result.getString("userUUID"));
-
-        mhp.getuserbyuuid(token, result.getString( "userUUID"));
+        //mhp.getuserbyuuid(token, result.getString( "userUUID"));
         System.out.println(mhp.getAssociatedOrg(token, result.getString("sessionToken")));
 
-        JSONObject jsonobject = mhp.getAssociatedOrg(token, result.getString("sessionToken"));
 
-        //JSONArray jsonArray = jsonobject.getJSONArray("");
-       /* System.out.println("44444444444444444444444444444444444");
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject explrObject = jsonArray.getJSONObject(i);
-            System.out.println(explrObject);
-        }*/
-        //System.out.println("44444444444444444444444444444444444");
     }
 
     @Test

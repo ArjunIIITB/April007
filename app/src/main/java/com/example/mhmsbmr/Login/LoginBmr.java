@@ -25,7 +25,9 @@ import org.json.JSONObject;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.crypto.Cipher;
 
@@ -47,9 +49,9 @@ public class LoginBmr extends AppCompatActivity {
     private int counter = 5;
     OkHttpClient client = new OkHttpClient();
 
-    private final String GlobalVariables = "http://13.126.27.50/MHMS_DEV/user/";
+    /*private final String GlobalVariables = "http://13.126.27.50/MHMS_DEV/user/";
     private final String GlobalVariablesRest = "http://13.126.27.50/MHMS_DEV/rest/";
-    private final String CORS = "http://13.126.27.50";
+    private final String CORS = "http://13.126.27.50";*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,12 +73,44 @@ public class LoginBmr extends AppCompatActivity {
                 Runnable runnable = new Runnable() {
                     @Override
                     public void run() {
-                        //test4(236);
+
+                        MHPFlow mhpFlow = new MHPFlow();
+                        String information = null;
                         final String userName = ((EditText) findViewById(R.id.etName)).getText().toString();
                         final String password = ((EditText) findViewById(R.id.etPassword)).getText().toString();
-                        System.out.println(userName+"     lskajdf;lkajsdf;lkjas;dfkjas;dkfj;sakdfj;sakdfj;sdalfkj;asdkfj    " +password);
-                        String salts[] = getSalt(userName);
-                        loginTest(salts, userName, password);
+                        System.out.println(userName+"     --------------------------     " +password);
+
+                        String jwtToken = mhpFlow.login(userName, password);
+
+
+                        try {
+                            Log.e("try","inside LoginBmr try----------------------------------");
+                            Log.e("JWT Token", jwtToken);
+                            JSONObject jsonObjectbject = new JSONObject(jwtToken);
+                            String token = jsonObjectbject.getString("token");
+                            Log.e("Token", token);
+                            JSONObject result = new JSONObject(MHPFlow.decoded(jwtToken));
+                            Log.e("decoded String (result)", result.toString());
+                            //mhpFlow.getuserbyuuid(token, result.getString( "userUUID"));
+                            //Log.e("getAssociatedOrg()",mhpFlow.getAssociatedOrg(token, result.getString("sessionToken")).toString());
+                            //System.out.println("getAssociatedOrg "+mhpFlow.getAssociatedOrg(token, result.getString("sessionToken")));
+                            JSONArray jsonArray = mhpFlow.getAssociatedOrg(token, result.getString("sessionToken"));
+                            //System.out.println(jsonArray.getJSONObject(jsonArray.length()-1));
+                            int cnt = 0;
+                            List<String> list = new ArrayList<String>();
+                            while(cnt < jsonArray.length()){
+                                JSONObject mheObject = jsonArray.getJSONObject(cnt);
+                                //System.out.println(mheObject.getString("name"));
+                                list.add(mheObject.getString("name"));
+                                cnt++;
+                            }
+                            Log.e("MHE list", list.toString());
+                            Log.e("try", "outside LoginBmr try----------------------------------");
+                        }catch(Exception e){
+                            e.printStackTrace();
+                        }
+
+
                     }
 
                 };
@@ -85,6 +119,10 @@ public class LoginBmr extends AppCompatActivity {
         });
     }
 
+} //Login ends
+
+
+/*
 public void newThread(View view) {
     // do something long
     Runnable runnable = new Runnable() {
@@ -311,5 +349,6 @@ public void newThread(View view) {
 
 
 
-} //Login ends
 
+
+*/

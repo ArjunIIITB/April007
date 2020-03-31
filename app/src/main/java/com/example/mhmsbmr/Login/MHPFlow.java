@@ -1,8 +1,9 @@
 package com.example.mhmsbmr.Login;
 
-//import android.util.Base64;
-import org.apache.commons.codec.binary.Base64;
+import android.util.Base64;
+//import org.apache.commons.codec.binary.Base64;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
@@ -116,7 +117,7 @@ public class MHPFlow {
         }catch(Exception e){
             e.printStackTrace();
         }
-        System.out.println(jsonObjectResult.toString());
+        //System.out.println(jsonObjectResult.toString());
         //getMHEInviteList(String );
         System.out.println("GET USER BY UUID ENDS HERE");
         return jsonObjectResult;
@@ -125,15 +126,14 @@ public class MHPFlow {
 
 
 
-    public JSONObject getAssociatedOrg(String jwtToken, String sessionId){
-        //jwtToken = "eyJEZXZlbG9wZWQgQnkiOiJlLUhlYWx0aCBSZXNlYXJjaCBDZW50ZXIsIElJSVQgQmFuZ2Fsb3JlIiwiSG9zdCI6Ikthcm5hdGFrYSBNZW50YWwgSGVhbHRoIE1hbmFnZW1lbnQgU3lzdGVtIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJwcm9mZXNzaW9uIjoiTUhNU1BzeWNob2xvZ2lvaW9pc3RzdGlzaXRhY2NlcHRpbmciLCJzdWIiOiJNSE1TIFNlY3VyaXR5IFRva2VuIiwibGFzdExvZ2luT3JnSWQiOiJhMjFiODg1ZS0yZjNhLTQ0MjUtOGI1Yi0wZDI3NGI0MmFmMjYiLCJzZXNzaW9uRW5kVGltZSI6MTU4NTYwNjg3MiwiaXNzIjoiS01ITVMiLCJzZXNzaW9uU3RhcnRUaW1lIjoxNTg1NTYzNjcyLCJzZXNzaW9uSWQiOiI4MjI4Y2I4Yy04N2ZhLTRhY2MtYjgxNi1lNjU3NDIzMzM4YTkiLCJ1c2VyTmFtZSI6InRlc3QwMDEiLCJsYXN0TG9naW5TdGFydCI6IjE1ODU1NjE2MDg2NDQiLCJvcmdVVUlEIjoiYTIxYjg4NWUtMmYzYS00NDI1LThiNWItMGQyNzRiNDJhZjI2IiwibmJmIjoxNTg1NTYzNjcyLCJvcmdSb2xlIjoiTUhFQWRtaW4iLCJzZXNzaW9uVG9rZW4iOiJTZXNzaW9uSWQ6MTcyLjMxLjUuMTMjdGVzdDAwMTphMjFiODg1ZS0yZjNhLTQ0MjUtOGI1Yi0wZDI3NGI0MmFmMjY6TUhNUzpNSEVBZG1pbiMxNTg1NTYzNjcyMjgzIy0xNzg0Njk1MTA1IzQyOCIsInBlcnNvbklkIjoiNmM5ODkxYjQtMDQ0ZS00MTY1LWFkOTMtMjg5ZThjODdjYmU1IiwidXNlclVVSUQiOiI5ODA3OGQxMi0zZmZhLTRlNTgtOGQyNy04MDU1OWNlZGIwODIiLCJleHAiOjE1ODU1OTk2NzIsImlhdCI6MTU4NTU2MzY3Mn0.AnCuIJlm0Ukj6_6sPP8KFi1Jcoi_mzAYt4BP9Tulkcc";
-        //sessionId = "SessionId:172.31.5.13#test001:a21b885e-2f3a-4425-8b5b-0d274b42af26:MHMS:MHEAdmin#1585563672283#-1784695105#428";
+    public JSONArray getAssociatedOrg(String jwtToken, String sessionId){
+
         final String RELATIVE_PATH = "getAssociatedOrg/";
         String returnString = null;
         final MediaType JSON
                 = MediaType.parse("application/json; charset=utf-8");
 
-        JSONObject jsonObjectResult = null;
+        JSONArray jsonObjectResult = null;
 
         JSONObject jsonObject = new JSONObject();
         try{
@@ -154,16 +154,10 @@ public class MHPFlow {
         Response response = null;
 
         try {
+
             response = client.newCall(request).execute();
             ResponseBody rb = response.body();
-            /*JSONObject jsnobject = new JSONObject(rb.string());
-            JSONArray jsonArray = jsnobject.getJSONArray("");
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject explrObject = jsonArray.getJSONObject(i);
-                System.out.println(explrObject);
-            }*/
-            System.out.println("-----------------------------------"+rb.string());
-
+            jsonObjectResult = new JSONArray(rb.string());
 
         }catch(Exception e){
             e.printStackTrace();
@@ -177,35 +171,33 @@ public class MHPFlow {
     public static String decoded(String JWTEncoded) throws Exception {
         try {
 
-            System.out.println("before spliting " + JWTEncoded);
+            //System.out.println("before spliting " + JWTEncoded);
             String[] split = JWTEncoded.split("\\.");
-            System.out.println("--------------------------------");
+            /*System.out.println("--------------------------------");
             for(String string : split){
                 System.out.println("012"+string);
-            }
+            }*/
             return(getJson(split[1]));
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
 
-    }
-
-
-
-
+    }//decode ends here
 
 
 
     public static String getJson(String strEncoded) throws UnsupportedEncodingException{
-        byte[] decodedBytes = Base64.decodeBase64(strEncoded);
-
+        //byte[] decodedBytes = Base64.decodeBase64(strEncoded);
+        byte[] decodedBytes = Base64.decode(strEncoded,Base64.DEFAULT);
         if(decodedBytes == null) {
-            System.out.println(" it is null");
+            System.out.println("Base64 unable to decode");
+            return "Base64 unable to decode";
         }
         return new String(decodedBytes, "UTF-8");
+        //return "return String";
 
-    }
+    }//getJson ends here
 
 
 
