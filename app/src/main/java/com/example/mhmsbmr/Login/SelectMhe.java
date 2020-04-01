@@ -1,4 +1,4 @@
-/*
+
 package com.example.mhmsbmr.Login;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,14 +26,19 @@ public class SelectMhe extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_mhe);
 
+        Intent intent = getIntent();
+
+        System.out.println("###################################################value = " + ((ArrayList<String>)intent.getSerializableExtra("list")).toString());
+        setContentView(R.layout.activity_select_mhe);
+
         spinnerMhe = findViewById(R.id.spinnerMhe);
 
-        List<String> categories = new ArrayList<>();
-        categories.add(0,"MHE/OP*");
+        List<String> categories = (ArrayList<String>)intent.getSerializableExtra("list");
+        /*categories.add(0,"MHE/OP*");
         categories.add("Ted");
         categories.add("Kartik clinic");
         categories.add("metro");
-        categories.add("SRM");
+        categories.add("SRM");*/
 
         ArrayAdapter<String> dataAdapter;
         dataAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, categories);
@@ -70,4 +75,4 @@ public class SelectMhe extends AppCompatActivity {
             }
         });
     }
-}*/
+}

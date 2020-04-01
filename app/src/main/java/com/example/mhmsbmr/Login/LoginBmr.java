@@ -2,6 +2,7 @@ package com.example.mhmsbmr.Login;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.content.SyncStatusObserver;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -91,21 +92,22 @@ public class LoginBmr extends AppCompatActivity {
                             Log.e("Token", token);
                             JSONObject result = new JSONObject(MHPFlow.decoded(jwtToken));
                             Log.e("decoded String (result)", result.toString());
-                            //mhpFlow.getuserbyuuid(token, result.getString( "userUUID"));
-                            //Log.e("getAssociatedOrg()",mhpFlow.getAssociatedOrg(token, result.getString("sessionToken")).toString());
-                            //System.out.println("getAssociatedOrg "+mhpFlow.getAssociatedOrg(token, result.getString("sessionToken")));
+                            Log.e("getAssociatedOrg()",mhpFlow.getAssociatedOrg(token, result.getString("sessionToken")).toString());
                             JSONArray jsonArray = mhpFlow.getAssociatedOrg(token, result.getString("sessionToken"));
                             //System.out.println(jsonArray.getJSONObject(jsonArray.length()-1));
                             int cnt = 0;
-                            List<String> list = new ArrayList<String>();
+                            ArrayList<String> list = new ArrayList<String>();
+                            list.add("MHE/OP*");
                             while(cnt < jsonArray.length()){
                                 JSONObject mheObject = jsonArray.getJSONObject(cnt);
-                                //System.out.println(mheObject.getString("name"));
                                 list.add(mheObject.getString("name"));
                                 cnt++;
                             }
                             Log.e("MHE list", list.toString());
                             Log.e("try", "outside LoginBmr try----------------------------------");
+                            Intent intent = new Intent(LoginBmr.this, SelectMhe.class);
+                            intent.putExtra("list", list);
+                            LoginBmr.this.startActivity(intent);
                         }catch(Exception e){
                             e.printStackTrace();
                         }
