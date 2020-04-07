@@ -2,7 +2,9 @@ package com.example.mhmsbmr.Login;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.SyncStatusObserver;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -18,6 +20,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.mhmsbmr.MainActivity;
 import com.example.mhmsbmr.R;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -70,11 +73,12 @@ public class LoginBmr extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 System.out.println("inside on click listener");
+                final String MyPreferences = "MyPrefs";
 
                 Runnable runnable = new Runnable() {
                     @Override
                     public void run() {
-
+                        final SharedPreferences sharedPreferences;
                         MHPFlow mhpFlow = new MHPFlow();
                         String information = null;
                         final String userName = ((EditText) findViewById(R.id.etName)).getText().toString();
@@ -90,10 +94,11 @@ public class LoginBmr extends AppCompatActivity {
                             JSONObject jsonObjectbject = new JSONObject(jwtToken);
                             String token = jsonObjectbject.getString("token");
                             Log.e("Token", token);
-                            JSONObject result = new JSONObject(MHPFlow.decoded(jwtToken));
-                            Log.e("decoded String (result)", result.toString());
-                            Log.e("getAssociatedOrg()",mhpFlow.getAssociatedOrg(token, result.getString("sessionToken")).toString());
-                            JSONArray jsonArray = mhpFlow.getAssociatedOrg(token, result.getString("sessionToken"));
+
+                            JSONObject decodedResult = new JSONObject(MHPFlow.decoded(jwtToken));
+                            Log.e("decoded String (result)", decodedResult.toString());
+                            Log.e("getAssociatedOrg()",mhpFlow.getAssociatedOrg(token, decodedResult.getString("sessionToken")).toString());
+                            JSONArray jsonArray = mhpFlow.getAssociatedOrg(token, decodedResult.getString("sessionToken"));
                             //System.out.println(jsonArray.getJSONObject(jsonArray.length()-1));
                             int cnt = 0;
                             ArrayList<String> list = new ArrayList<String>();
@@ -104,10 +109,25 @@ public class LoginBmr extends AppCompatActivity {
                                 cnt++;
                             }
                             Log.e("MHE list", list.toString());
+
+
+
+
+
+                           /* Intent intent = new Intent(LoginBmr.this, MainActivity.class);
+                            intent.putExtra("user", user.toString());
+                            intent.putExtra("decodedResult", decodedResult.toString());
+                            LoginBmr.this.startActivity(intent);
+
+                            */
+
                             Log.e("try", "outside LoginBmr try----------------------------------");
                             Intent intent = new Intent(LoginBmr.this, SelectMhe.class);
+                            intent.putExtra("userName", userName);
+                            intent.putExtra("password", password);
                             intent.putExtra("list", list);
                             LoginBmr.this.startActivity(intent);
+
                         }catch(Exception e){
                             e.printStackTrace();
                         }
